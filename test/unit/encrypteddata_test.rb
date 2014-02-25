@@ -73,7 +73,7 @@ d8d8ednfn9mpVrDY0HdRWu45E5abcxffYpJWNrl3BwA=
 
   def test_trust
     secret_data = Hieracrypta::EncryptedData.new(@trusted_signed_data)
-    assert_equal false, secret_data.trust_sig?
+    assert_equal true, secret_data.trust_sig?
   end
 
   def test_untrust

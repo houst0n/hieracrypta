@@ -5,7 +5,6 @@ module Hieracrypta
     def initialize (data)
       @crypto = GPGME::Crypto.new
       @data = data
-      @trusted = false
     end
 
     def decrypt
@@ -14,13 +13,11 @@ module Hieracrypta
 
     def trust_sig?
       begin
-        crypto.verify(@data) { |signature| signature.from }
-        @trusted = true
+        @crypto.verify(@data) { |signature| signature.from }
+        true
       rescue
-        @trusted = false
+        false
       end
-
-      @trusted
     end
   end
 end
