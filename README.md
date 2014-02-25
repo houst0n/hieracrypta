@@ -56,40 +56,41 @@ JSON Object Structure
 }
 ```
 Where:
-id is mandatory
-pubkey is mandatory
-allow is optional - missing == allow all
-branch is optional - missing == allow all
-tag is optional - missing == allow all
-deny is optional - missing == deny none
-branch is optional - missing == deny none
-tag is optional - missing == deny none
+* id is mandatory
+* pubkey is mandatory
+* allow is optional - missing == allow all
+* branch is optional - missing == allow all
+* tag is optional - missing == allow all
+* deny is optional - missing == deny none
+* branch is optional - missing == deny none
+* tag is optional - missing == deny none
 
 ###REST API (Must)
-PUT /identities/ + body comprising a signed json object which 
+
+####PUT /identities/ + body comprising a signed json object which 
 Returns 
-200 if the request is well formed and signed
-400 if the request body is not well formed 
-403 if the request body is not signed by a known administrator
+* 200 if the request is well formed and signed
+* 400 if the request body is not well formed 
+* 403 if the request body is not signed by a known administrator
 
-GET /file/{identity}/branches/{branch}/{file}
+####GET /file/{identity}/branches/{branch}/{file}
 Returns
-200 + body comprising encrypted yaml file if the identity, branch, and file are known and the branch is allowed
-403 if the identity, branch, and file are known but the branch is not allowed
-404 if the identity, branch or file are not known
+* 200 + body comprising encrypted yaml file if the identity, branch, and file are known and the branch is allowed
+* 403 if the identity, branch, and file are known but the branch is not allowed
+* 404 if the identity, branch or file are not known
 
-GET /file/{identity}/tags/{tag}/{file}
+####GET /file/{identity}/tags/{tag}/{file}
 Returns
-200 + body comprising encrypted yaml file if the identity, tag, and file are known and the tag is allowed
-403 if the identity, tag, and file are known but the tag is not allowed
-404 if the identity, tag or file are not known
+* 200 + body comprising encrypted yaml file if the identity, tag, and file are known and the tag is allowed
+* 403 if the identity, tag, and file are known but the tag is not allowed
+* 404 if the identity, tag or file are not known
 
 ###REST API (Could)
-GET /identities/
+####GET /identities/
 Returns
-200 + list of known identity names
+* 200 + list of known identity names
 
-GET /identities/{identity}
+####GET /identities/{identity}
 Returns
-200 + body comprising public key of specified identity if the identity is known
-404 if the identity is not known
+* 200 + body comprising public key of specified identity if the identity is known
+* 404 if the identity is not known
