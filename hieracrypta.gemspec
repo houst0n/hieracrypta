@@ -25,4 +25,9 @@ spec = Gem::Specification.new do |s|
   s.add_runtime_dependency('gli', '2.9.0')
   s.add_runtime_dependency('gpgme', '2.0.2')
   s.add_runtime_dependency('sinatra', '1.4.4')
+  s.add_runtime_dependency('gpgme', '2.0.2')
+  s.add_runtime_dependency('gli', '2.9.0')
+  s.add_runtime_dependency('rack', '1.5.2')
+  s.add_runtime_dependency('rack-test', '0.6.2')
 end
+
