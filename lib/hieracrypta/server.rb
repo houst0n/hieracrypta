@@ -3,10 +3,6 @@ require 'sinatra'
 module Hieracrypta
   class WebService < Sinatra::Base
 
-    configure do
-      set :run, false
-    end
-
     def initialize
       super
     end
