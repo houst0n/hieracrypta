@@ -3,7 +3,9 @@ require 'sinatra'
 module Hieracrypta
   class WebService < Sinatra::Base
 
-    def self.configure(repository_location)
+    def initialize
+      # This should read the configuration file; for now we'll hardcode:
+      repository_location = '/Users/justinrowles/Documents/workspace/hieracrypta'
       puts repository_location
       puts 'create git client'
       @git_client = Hieracrypta::GitClient.new(repository_location)
