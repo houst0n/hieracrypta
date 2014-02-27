@@ -11,7 +11,7 @@ module Hieracrypta
       super
       puts repository_location
       puts 'create git client'
-      @@git_client = Hieracrypta::GitClient.new()#(repository_location)
+      @@git_client = Hieracrypta::GitClient.new(repository_location)
       puts 'created git client'
       run!
     end
@@ -24,8 +24,8 @@ module Hieracrypta
     #If the request body is not signed by a known administrator
     #* HTTP 403 + body describing error reason
     put '/identities/' do
+      gpg_signature_client = Hieracrypta::EncryptedData.new(request.body)
       request.body
-      gpg_signature_client = Hieracrypta::EncryptedData.new
     end
     
     ####GET /file/{identity}/branches/{branch}/{file}
@@ -60,7 +60,7 @@ module Hieracrypta
 
     def send(content, identity) 
       gpg_encrypter_client = Hieracrypta::UnencryptedData.new(identity, content)
-      if (!gpg_encrypter_client.known) then
+      if (!gpg_encrypter_client.known?) then
         response.status=404
         return "No key found for identity '#{identity}'"
       end

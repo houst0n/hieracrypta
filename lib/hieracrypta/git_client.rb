@@ -3,7 +3,7 @@ require 'rugged'
 module Hieracrypta
   class GitClient
 
-    def initialize#(repository_location)
+    def initialize(repository_location)
       super
       #puts repository_location
       #@rugged=Rugged::Repository.new(repository_location)

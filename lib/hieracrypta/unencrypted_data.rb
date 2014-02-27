@@ -8,7 +8,7 @@ module Hieracrypta
       @identity = identity
     end
 
-    def known
+    def known?
       GPGME::Key.find(:secret, @identity).length==1
     end
 
