@@ -3,15 +3,11 @@ require 'sinatra'
 module Hieracrypta
   class WebService < Sinatra::Base
 
-<<<<<<< HEAD
     configure do
       set :run, false
     end
 
     def self.configure(repository_location)
-=======
-    def initialize
->>>>>>> fa18a849d12bce11ec9f64f8110fef632b246abc
       super
       puts repository_location
       puts 'create git client'
@@ -65,7 +61,7 @@ module Hieracrypta
     def send(content, identity) 
       gpg_encrypter_client = Hieracrypta::UnencryptedData.new(identity, content)
       if (!gpg_encrypter_client.known) then
-        status=404
+        response.status=404
         return "No key found for identity '#{identity}'"
       end
       gpg_encrypter_client.encrypt
