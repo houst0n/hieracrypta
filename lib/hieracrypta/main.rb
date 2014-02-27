@@ -25,6 +25,7 @@ module Hieracrypta
       desc 'Start the service'
       command :start do |c|
         c.action do |global_options, options, args|
+          Hieracrypta::WebService.configure('/Users/justinrowles/Documents/workspace/hieracrypta')
           Hieracrypta::WebService.run!
         end
       end

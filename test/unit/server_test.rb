@@ -11,14 +11,18 @@ class HieracryptoTest < Test::Unit::TestCase
     Hieracrypta::WebService
   end
 
-  def test_it_says_hello_world
-    get '/'
+  def test_put_identity
+    put '/identity/'
     assert last_response.ok?
-    assert_equal 'Hello World', last_response.body
   end
+  
+  def test_get_file_by_tag
+    get '/file/myidentity/tags/mytag/path/to/my/file.txt'
+    assert last_response.ok?
+  end     
 
-  def test_it_says_hello_to_a_person
-    get '/', :name => 'houst0n'
-    assert last_response.body.include?('houst0n')
+  def test_get_file_by_tag
+    get '/file/myidentity/branches/mybranch/path/to/my/file.txt'
+    assert last_response.ok?
   end
 end

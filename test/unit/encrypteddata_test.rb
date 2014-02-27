@@ -18,7 +18,7 @@ class EncryptedDataTest < Test::Unit::TestCase
   end
 
   def test_decrypt
-    secret_data = Hieracrypta::EncryptedData.new(@example_secret)
+    secret_data = Hieracrypta::EncryptedData.new(@example_encrypted)
     assert_equal @example, secret_data.decrypt.to_s
   end
 

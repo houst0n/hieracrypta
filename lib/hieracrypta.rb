@@ -1,4 +1,6 @@
 require 'hieracrypta/encrypted_data.rb'
+require 'hieracrypta/unencrypted_data.rb'
 require 'hieracrypta/main'
 require 'hieracrypta/server'
 require 'hieracrypta/version'
+require 'hieracrypta/git_client'
