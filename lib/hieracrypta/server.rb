@@ -3,11 +3,15 @@ require 'sinatra'
 module Hieracrypta
   class WebService < Sinatra::Base
 
+<<<<<<< HEAD
     configure do
       set :run, false
     end
 
     def self.configure(repository_location)
+=======
+    def initialize
+>>>>>>> fa18a849d12bce11ec9f64f8110fef632b246abc
       super
       puts repository_location
       puts 'create git client'

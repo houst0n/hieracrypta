@@ -18,6 +18,11 @@ spec = Gem::Specification.new do |s|
   s.executables << 'hieracrypta'
 
   s.add_development_dependency('rack-test', '0.6.2')
+  s.add_development_dependency('cucumber', '>0')
+  s.add_development_dependency('gli', '2.9.0')
+  s.add_development_dependency('gpgme', '2.0.2')
+  s.add_development_dependency('rake', '10.1.1')
+  s.add_development_dependency('sinatra', '1.4.4')
 
   s.add_runtime_dependency('gli', '2.9.0')
   s.add_runtime_dependency('gpgme', '2.0.2')

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -eu
+
+PACKAGES="git-core ruby1.9.1 ruby1.9.1-dev build-essential vim-nox screen gnupg2"
+
+status () {
+  echo "---> ${@}" >&2
+}
+
+# Sometimes Virtualbox gets confused, often after moving between networks
+preflight_resolv () {
+  if [ ! -d /etc/dnsmasq.d ]; then
+    status "setting default resolver"
+    echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+  fi
+}
+
+preflight_packages () {
+  if ! dpkg -s $PACKAGES >/dev/null 2>&1; then
+    status "apt-get update"
+    apt-get update -y -qq
+    status "installing apt packages"
+    apt-get install -y -qq $PACKAGES 2>&1
+  fi
+
+  update-alternatives --set ruby /usr/bin/ruby1.9.1
+
+  echo 'gem: --quiet --no-rdoc --no-ri' > /root/.gemrc
+  if ! gem list -i "bundler" >/dev/null; then
+    status "installing bundler"
+    gem install bundler 2>&1
+  fi
+}
+
+run_tests () {
+  cd /vagrant
+  status "Bundling for test suite"
+  bundle install
+  if [ $? -ne 0 ]; then
+    echo 'Bundle install failed. Bailing out.'
+    exit 1
+  fi
+  status "Running test suite"
+  bundle exec rake test
+}
+
+main () {
+  preflight_resolv
+  preflight_packages
+  run_tests
+}
+
+main "$@"
