@@ -1,0 +1,6 @@
+kill -9 $(cat pid)
+sleep 1
+./bin/hieracrypta -v start &
+echo $! > pid
+sleep 1
+ps -ef | grep ruby
