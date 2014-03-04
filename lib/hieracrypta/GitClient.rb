@@ -14,30 +14,20 @@ module Hieracrypta
         puts "No such tag: #{tag}"
         return nil
       end
-      file_parts=file.split('/')
-      for file_part in file_parts do
-        root_hash=root[file_part]
-        if root_hash.nil?
-          return nil
-        end
-        root=Rugged::Object.lookup(@rugged, root_hash[:oid])
-      end
-      
-      root.content
+      get_file(root, file)
     end
     
     def get_branch(branch, file)
-      begin
-        root = Rugged::Branch.lookup(@rugged, branch)
-      rescue Rugged::ReferenceError
-        puts "No such branch: #{branch}"
-        return nil
-      end
+      root = Rugged::Branch.lookup(@rugged, branch)
       if root.nil?
         puts "No such branch: #{branch}"
         return nil
       end
       root=Rugged::Object.lookup(@rugged, root.target()).tree()
+      get_file(root, file)
+    end
+    
+    def get_file(root, file)
       file_parts=file.split('/')
       for file_part in file_parts do
         root_hash=root[file_part]
@@ -46,7 +36,6 @@ module Hieracrypta
         end
         root=Rugged::Object.lookup(@rugged, root_hash[:oid])
       end
-      
       root.content
     end
   end
