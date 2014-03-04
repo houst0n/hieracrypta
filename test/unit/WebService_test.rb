@@ -14,14 +14,14 @@ class HieracryptoTest < Test::Unit::TestCase
 
   def test_put_identity_without_signature
     curDir=File.dirname(__FILE__)
-    unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_master", curDir))
+    unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_test", curDir))
     put '/identities/', unsigned_json_file, "CONTENT_TYPE" => "application/json"
     assert ! last_response.ok?
   end
   
   def test_put_identity_with_signature
     curDir=File.dirname(__FILE__)
-    unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_master", curDir))
+    unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_test", curDir))
     signed_json_file=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta@dev.null').to_s
     put '/identities/', signed_json_file, "CONTENT_TYPE" => "application/json"
     assert last_response.ok?

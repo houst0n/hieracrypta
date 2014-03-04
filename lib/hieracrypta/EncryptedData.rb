@@ -1,4 +1,5 @@
 require 'gpgme'
+require 'json'
 
 module Hieracrypta
   class EncryptedData
@@ -13,7 +14,7 @@ module Hieracrypta
     end
 
     def decrypt
-      @crypto.decrypt(@data)
+      JSON.parse(@crypto.decrypt(@data).to_s)
     end
 
   end

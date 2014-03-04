@@ -1,8 +1,0 @@
-{
-	"id": "hieracrypt",
-	"pubkey": ???
-	"deny": {
-		"branch":	[masterbranch],
-		"tag":	[singletag]
-	}
-}
