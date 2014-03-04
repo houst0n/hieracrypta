@@ -10,7 +10,7 @@ class GitClientTest < Test::Unit::TestCase
   end
   
   def test_read_existing_file_from_existing_branch
-#    @git.get_branch('realbranch', 'realfile')
+#    content=@git.get_branch('realbranch', 'realfile')
   end
   
   def test_read_nonexisting_file_from_existing_branch
@@ -26,19 +26,23 @@ class GitClientTest < Test::Unit::TestCase
   end
   
   def test_read_existing_file_from_existing_tag
-#    @git.get_tag('realtag', 'apple')
+    content = @git.get_tag('testtag', 'test/unit/testdata/testfile')
+    assert_equal "This is a test file on the tag testtag\n", content
   end
   
   def test_read_nonexisting_file_from_existing_tag
-#    @git.get_tag('realtag', 'fakefile')
+    content = @git.get_tag('testtag', 'test/unit/testdata/fakefile')
+    assert_equal nil, content
   end
   
   def test_read_existing_file_from_nonexisting_tag
-#    @git.get_tag('faketag', 'apple')
+    content = @git.get_tag('faketag', 'test/unit/testdata/testfile')
+    assert_equal nil, content
   end
   
   def test_read_nonexisting_file_from_nonexisting_tag
-#    @git.get_tag('faketag', 'fakefile')
+    content = @git.get_tag('faketag', 'test/unit/testdata/fakefile')
+    assert_equal nil, content
   end
   
 end

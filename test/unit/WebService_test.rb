@@ -23,9 +23,7 @@ class HieracryptoTest < Test::Unit::TestCase
     curDir=File.dirname(__FILE__)
     unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_master", curDir))
     signed_json_file=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta@dev.null').to_s
-    puts signed_json_file
     put '/identities/', signed_json_file, "CONTENT_TYPE" => "application/json"
-    puts last_response
     assert last_response.ok?
   end
   
