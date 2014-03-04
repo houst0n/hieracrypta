@@ -6,10 +6,9 @@ module Hieracrypta
       @crypto = GPGME::Crypto.new
       @data = data
       @identity = identity
-    end
-
-    def known?
-      GPGME::Key.find(:secret, @identity).length==1
+      if GPGME::Key.find(:secret, @identity).length!=1
+        raise Hieracrypta::UnknownIdentity.new(@identity)
+      end
     end
 
     def encrypt

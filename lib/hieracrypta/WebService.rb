@@ -27,12 +27,13 @@ module Hieracrypta
     #If the request body is not signed by a known administrator
     #* HTTP 403 + body describing error reason
     put '/identities/' do
-      gpg_signature_client = Hieracrypta::EncryptedData.new(request.body)
-      if ! gpg_signature_client.trust_sig?
+      begin
+        gpg_signature_client = Hieracrypta::EncryptedData.new(request.body)
+       'Signature trusted'
+      rescue UntrustedSignature
         response.status=403
-        return 'This signature is not trusted'
+        'This signature is not trusted'
       end
-      'Signature trusted'
     end
 
     ####GET /file/{identity}/branches/{branch}/{file}
@@ -66,8 +67,9 @@ module Hieracrypta
     end
 
     def send(content, identity)
-      gpg_encrypter_client = Hieracrypta::UnencryptedData.new(identity, content)
-      if (!gpg_encrypter_client.known?) then
+      begin
+        gpg_encrypter_client = Hieracrypta::UnencryptedData.new(identity, content)
+      rescue UnknownIdentity 
         response.status=404
         return "No key found for identity '#{identity}'"
       end

@@ -23,13 +23,13 @@ class EncryptedDataTest < Test::Unit::TestCase
   end
 
   def test_trust
-    secret_data = Hieracrypta::EncryptedData.new(@trusted_signed_data)
-    assert_equal true, secret_data.trust_sig?
+    Hieracrypta::EncryptedData.new(@trusted_signed_data)
   end
 
   def test_untrust
-    secret_data = Hieracrypta::EncryptedData.new(@untrusted_signed_data)
-    assert_equal false, secret_data.trust_sig?
+    assert_raise Hieracrypta::UntrustedSignature do
+      Hieracrypta::EncryptedData.new(@untrusted_signed_data)
+    end
   end
 
 end
