@@ -1,7 +1,7 @@
 require 'hieracrypta'
 require 'test/unit'
 
-class EncryptedDataTest < Test::Unit::TestCase
+class PermissionsDocumentTest < Test::Unit::TestCase
 
   def initialize (args)
     super(args)
@@ -17,18 +17,14 @@ class EncryptedDataTest < Test::Unit::TestCase
     @untrusted_signed_data=File.read(File.expand_path("testdata/untrusted_signed_data", curDir))
   end
 
-  def test_decrypt
-    secret_data = Hieracrypta::EncryptedData.new(@example_encrypted)
-    assert_equal 'This text is encrypted', secret_data.decrypt['message']
-  end
-
-  def test_trust
-    Hieracrypta::EncryptedData.new(@trusted_signed_data)
+  def test_decrypt_trusted_but_badly_formatted
+    secret_data = Hieracrypta::PermissionsDocument.new(@example_encrypted, true)
+    assert_equal 'This text is encrypted', secret_data.raw()['message']
   end
 
   def test_untrust
     assert_raise Hieracrypta::UntrustedSignature do
-      Hieracrypta::EncryptedData.new(@untrusted_signed_data)
+      Hieracrypta::PermissionsDocument.new(@untrusted_signed_data)
     end
   end
 

@@ -28,7 +28,7 @@ module Hieracrypta
     #* HTTP 403 + body describing error reason
     put '/identities/' do
       begin
-        gpg_signature_client = Hieracrypta::EncryptedData.new(request.body)
+        Hieracrypta::PermissionsDocument.new(request.body)
        'Signature trusted'
       rescue UntrustedSignature
         response.status=403
@@ -68,12 +68,11 @@ module Hieracrypta
 
     def send(content, identity)
       begin
-        gpg_encrypter_client = Hieracrypta::UnencryptedData.new(identity, content)
+        Hieracrypta::Secret.new(identity, content).data
       rescue UnknownIdentity 
         response.status=404
         return "No key found for identity '#{identity}'"
       end
-      gpg_encrypter_client.encrypt
     end
   end
 end

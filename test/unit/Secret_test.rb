@@ -1,7 +1,7 @@
 require 'hieracrypta'
 require 'test/unit'
 
-class UnencryptedDataTest < Test::Unit::TestCase
+class SecretTest < Test::Unit::TestCase
 
   def initialize (args)
     super(args)
@@ -14,12 +14,12 @@ class UnencryptedDataTest < Test::Unit::TestCase
 
   def test_encryption_with_known_identity
     #TODO
-    #Hieracrypta::UnencryptedData.new(@example, 'nobody@example.com')
+    #Hieracrypta::Secret.new(@example, 'nobody@example.com')
   end
   
   def test_refused_encryption_with_unknown_identity
     assert_raise Hieracrypta::UnknownIdentity do
-      Hieracrypta::UnencryptedData.new(@example, 'nobody@example.com')
+      Hieracrypta::Secret.new(@example, 'nobody@example.com')
     end
   end
 
