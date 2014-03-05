@@ -50,6 +50,12 @@ module Hieracrypta
       rescue UnknownIdentity 
         response.status=404
         "No key found for identity '#{identity}'"
+      rescue NoSuchFile
+        response.status=404
+        "No file '#{file}' on branch '#{branch}'"
+      rescue NoSuchTag
+        response.status=404
+        "No branch '#{branch}'"
       rescue Exception => e
         response.status=500
         e.to_s
@@ -73,9 +79,15 @@ module Hieracrypta
       rescue UnknownIdentity 
         response.status=404
         "No key found for identity '#{identity}'"
+      rescue NoSuchFile
+        response.status=404
+        "No file '#{file}' tagged '#{tag}'"
+      rescue NoSuchTag
+        response.status=404
+        "No tag '#{tag}'"
       rescue Exception => e
         response.status=500
-        e.class
+        e.to_s
       end
     end
 

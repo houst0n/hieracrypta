@@ -39,12 +39,14 @@ class HieracryptoTest < Test::Unit::TestCase
 
   def test_get_non_existing_file_from_existing_branch_with_known_identity
     get '/file/hieracrypta@dev.null/branches/testbranch/test/unit/testdata/fakefile'
-    assert ! last_response.ok?
+    assert last_response.not_found?
+    assert_equal "No file 'test/unit/testdata/fakefile' on branch 'testbranch'", last_response.body
   end
   
   def test_get_non_existing_file_from_existing_tag_with_known_identity
     get '/file/hieracrypta@dev.null/tags/testtag/test/unit/testdata/fakefile'
-    assert ! last_response.ok?
+    assert last_response.not_found?
+    assert_equal "No file 'test/unit/testdata/fakefile' tagged 'testtag'", last_response.body
   end
 
   def test_get_existing_file_from_existing_branch_with_known_identity
