@@ -36,4 +36,26 @@ class HieracryptoTest < Test::Unit::TestCase
     get '/file/myidentity/branches/mybranch/path/to/my/file.txt'
     assert ! last_response.ok?
   end
+
+  def test_get_non_existing_file_from_existing_branch_with_known_identity
+    get '/file/hieracrypta@dev.null/branches/testbranch/test/unit/testdata/fakefile'
+    assert ! last_response.ok?
+  end
+  
+  def test_get_non_existing_file_from_existing_tag_with_known_identity
+    get '/file/hieracrypta@dev.null/tags/testtag/test/unit/testdata/fakefile'
+    assert ! last_response.ok?
+  end
+
+  def test_get_existing_file_from_existing_branch_with_known_identity
+    get '/file/hieracrypta@dev.null/branches/testbranch/test/unit/testdata/testfile2'
+    assert last_response.ok?
+    assert_equal "This is a test file on the branch testbranch\n", GPGME::Crypto.new().decrypt(last_response.body).to_s
+  end
+  
+  def test_get_existing_file_from_existing_tag_with_known_identity
+    get '/file/hieracrypta@dev.null/tags/testtag/test/unit/testdata/testfile'
+    assert last_response.ok?
+    assert_equal "This is a test file on the tag testtag\n", GPGME::Crypto.new().decrypt(last_response.body).to_s
+  end
 end

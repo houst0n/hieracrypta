@@ -6,8 +6,11 @@ module Hieracrypta
       if GPGME::Key.find(:secret, identity).length!=1
         raise Hieracrypta::UnknownIdentity.new(@identity)
       end
-      crypto = GPGME::Crypto.new
-      @data = crypto.encrypt data, :recipients => @identity
+      @data = GPGME::Crypto.new().encrypt data, :recipients => identity, :always_trust => true
+    end
+    
+    def data
+      @data.to_s
     end
   end
 end

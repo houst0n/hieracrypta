@@ -5,16 +5,9 @@ module Hieracrypta
   class PermissionsDocument
     def initialize (data, force_trust = false)
       crypto = GPGME::Crypto.new()
-      #puts '>>>>>>>>>>>>>>>>>>>>>>>>>'
-      #puts '>>>>>>>>>>>>>>>>>>>>>>>>>'
-      #puts data
       begin
         crypto.verify(data) { |signature| puts signature; signature.from }
       rescue Exception => e
-        #puts e.class
-        #puts e
-        #puts '>>>>>>>>>>>>>>>>>>>>>>>>>'
-        #puts '>>>>>>>>>>>>>>>>>>>>>>>>>'
         if ! force_trust 
           raise Hieracrypta::UntrustedSignature.new()
         end

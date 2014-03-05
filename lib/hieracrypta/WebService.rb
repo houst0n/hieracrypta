@@ -11,14 +11,9 @@ module Hieracrypta
       super
       # This should read the configuration file; for now we'll hardcode:
       repository_location = '/Users/justinrowles/Documents/workspace/hieracrypta'
-#      @git_client = Hieracrypta::GitClient.new(repository_location)
-      puts 'started'
+      @git_client = Hieracrypta::GitClient.new(repository_location)
     end
 
-    get '/' do
-      'hello world'
-    end
-    
     ####PUT /identities/ + body comprising a signed json object
     #If the request is well formed and signed
     #* HTTP 200
@@ -44,11 +39,21 @@ module Hieracrypta
     #If the identity, branch or file are not known
     #* HTTP 404 + body describing error reason
     get '/file/:identity/branches/:branch/*' do
-      file = params[:splat][0]
-      identity=params[:identity]
-      branch=params[:branch]
-      content = @git_client.get_branch(branch, file)
-      send(content, identity)
+      begin
+        file = params[:splat][0]
+        identity=params[:identity]
+        branch=params[:branch]
+        content = @git_client.get_branch(branch, file)
+        content_type 'text/plain'
+        #puts response.methods().sort()
+        Hieracrypta::Secret.new(identity, content).data
+      rescue UnknownIdentity 
+        response.status=404
+        "No key found for identity '#{identity}'"
+      rescue Exception => e
+        response.status=500
+        e.to_s
+      end
     end
 
     ####GET /file/{identity}/tags/{tag}/{file}
@@ -59,20 +64,20 @@ module Hieracrypta
     #If the identity, tag or file are not known
     #* HTTP 404 + body describing error reason
     get '/file/:identity/tags/:tag/*' do
-      file = params[:splat][0]
-      identity=params[:identity]
-      tag=params[:tag]
-      content = @git_client.get_tag(tag, file)
-      send(content, identity)
-    end
-
-    def send(content, identity)
       begin
+        file = params[:splat][0]
+        identity=params[:identity]
+        tag=params[:tag]
+        content = @git_client.get_tag(tag, file)
         Hieracrypta::Secret.new(identity, content).data
       rescue UnknownIdentity 
         response.status=404
-        return "No key found for identity '#{identity}'"
+        "No key found for identity '#{identity}'"
+      rescue Exception => e
+        response.status=500
+        e.class
       end
     end
+
   end
 end
