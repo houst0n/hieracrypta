@@ -4,19 +4,35 @@ require 'json'
 module Hieracrypta
   class PermissionsDocument
     def initialize (data, force_trust = false)
+      @hash=check_and_decrypt(data, force_trust)
+      parse_hash(force_trust)
+    end
+    
+    def raw
+      @hash
+    end
+
+    def check_and_decrypt(data, force_trust)
       crypto = GPGME::Crypto.new()
+      trusted=false
       begin
-        crypto.verify(data) { |signature| puts signature; signature.from }
-      rescue Exception => e
+        crypto.verify(data) { |signature| trusted = check_signature(signature, trusted) }
+      rescue EOFError => e
         if ! force_trust 
-          raise Hieracrypta::UntrustedSignature.new()
+          raise Hieracrypta::NotSigned.new()
         end
       end
+      if ! trusted and ! force_trust 
+        raise Hieracrypta::UntrustedSignature.new()
+      end
       begin
-        @hash=JSON.parse(crypto.decrypt(data).to_s)
+        JSON.parse(crypto.decrypt(data).to_s)
       rescue GPGME::Error::NoData
         raise Hieracrypta::BadFormat.new()
       end
+    end
+
+    def parse_hash(force_trust)
       @id=@hash['id']
       if @id.nil? and ! force_trust
         raise Hieracrypta::BadFormat.new()
@@ -37,9 +53,17 @@ module Hieracrypta
       end
     end
     
-    def raw
-      @hash
+    def check_signature(signature, trusted)
+      puts '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+      puts '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+      puts trusted
+      puts trusted.class 
+      puts signature
+      puts signature.class 
+      puts signature.key().owner_trust; 
+      trusted or signature.pka_trust
+      puts '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+      puts '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
     end
-
   end
 end

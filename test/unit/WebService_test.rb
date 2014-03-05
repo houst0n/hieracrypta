@@ -43,10 +43,22 @@ class HieracryptoTest < Test::Unit::TestCase
     assert_equal "No file 'test/unit/testdata/fakefile' on branch 'testbranch'", last_response.body
   end
   
+  def test_get_non_existing_file_from_nonexisting_branch_with_known_identity
+    get '/file/hieracrypta@dev.null/branches/fakebranch/test/unit/testdata/fakefile'
+    assert last_response.not_found?
+    assert_equal "No branch 'fakebranch'", last_response.body
+  end
+  
   def test_get_non_existing_file_from_existing_tag_with_known_identity
     get '/file/hieracrypta@dev.null/tags/testtag/test/unit/testdata/fakefile'
     assert last_response.not_found?
     assert_equal "No file 'test/unit/testdata/fakefile' tagged 'testtag'", last_response.body
+  end
+
+  def test_get_non_existing_file_from_nonexisting_tag_with_known_identity
+    get '/file/hieracrypta@dev.null/tags/faketag/test/unit/testdata/fakefile'
+    assert last_response.not_found?
+    assert_equal "No tag 'faketag'", last_response.body
   end
 
   def test_get_existing_file_from_existing_branch_with_known_identity

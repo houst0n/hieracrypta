@@ -53,7 +53,7 @@ module Hieracrypta
       rescue NoSuchFile
         response.status=404
         "No file '#{file}' on branch '#{branch}'"
-      rescue NoSuchTag
+      rescue NoSuchBranch
         response.status=404
         "No branch '#{branch}'"
       rescue Exception => e

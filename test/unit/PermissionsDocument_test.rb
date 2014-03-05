@@ -23,7 +23,7 @@ class PermissionsDocumentTest < Test::Unit::TestCase
   end
 
   def test_untrust
-    assert_raise Hieracrypta::UntrustedSignature do
+    assert_raise Hieracrypta::NotSigned do
       Hieracrypta::PermissionsDocument.new(@untrusted_signed_data)
     end
   end
