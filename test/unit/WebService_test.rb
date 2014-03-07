@@ -5,7 +5,7 @@ require 'test/unit'
 require 'rack/test'
 require 'gpgme'
 
-class HieracryptoTest < Test::Unit::TestCase
+class WebServiceTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app

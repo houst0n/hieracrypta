@@ -14,19 +14,9 @@ module Hieracrypta
 
     def check_and_decrypt(data, force_trust)
       crypto = GPGME::Crypto.new()
-      trusted=false
+      document = check_signature(crypto, data, force_trust)
       begin
-        crypto.verify(data) { |signature| trusted = check_signature(signature, trusted) }
-      rescue EOFError => e
-        if ! force_trust 
-          raise Hieracrypta::NotSigned.new()
-        end
-      end
-      if ! trusted and ! force_trust 
-        raise Hieracrypta::UntrustedSignature.new()
-      end
-      begin
-        JSON.parse(crypto.decrypt(data).to_s)
+        JSON.parse(document)
       rescue GPGME::Error::NoData
         raise Hieracrypta::BadFormat.new()
       end
@@ -53,17 +43,24 @@ module Hieracrypta
       end
     end
     
-    def check_signature(signature, trusted)
-      puts '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-      puts '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-      puts trusted
-      puts trusted.class 
-      puts signature
-      puts signature.class 
-      puts signature.key().owner_trust; 
-      trusted or signature.pka_trust
-      puts '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
-      puts '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+    def check_signature(crypto, data, force_trust)
+      begin
+        verified = force_trust
+        document = crypto.verify(data) { |signature|
+          if ! verified
+            if signature.key().owner_trust > 0
+              verified = true
+            end
+          end 
+        }
+      rescue EOFError 
+        #Occurs when there is no signature, at the point the signature object is referenced.
+        raise Hieracrypta::NotSigned.new()
+      end
+      if verified
+        return document.read
+      end
+      raise Hieracrypta::UntrustedSignature.new()
     end
   end
 end

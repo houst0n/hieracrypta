@@ -13,13 +13,12 @@ class SecretTest < Test::Unit::TestCase
   end
 
   def test_encryption_with_known_identity
-    #TODO
-    #Hieracrypta::Secret.new(@example, 'nobody@example.com')
+    Hieracrypta::Secret.new("hieracrypta@dev.null", @example)
   end
   
   def test_refused_encryption_with_unknown_identity
     assert_raise Hieracrypta::UnknownIdentity do
-      Hieracrypta::Secret.new(@example, 'nobody@example.com')
+      Hieracrypta::Secret.new('nobody@example.com', @example)
     end
   end
 
