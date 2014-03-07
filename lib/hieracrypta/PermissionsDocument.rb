@@ -70,6 +70,7 @@ module Hieracrypta
     def permit_tag(checking_tag)
       if !@allow_tag.nil?
         @allow_tag.each() { |tag| if tag==checking_tag; return true; end; }
+        return false
       end
       if !@deny_tag.nil? 
         @deny_tag.each() { |tag| if tag==checking_tag; return false; end; }
@@ -80,6 +81,7 @@ module Hieracrypta
     def permit_branch(checking_branch)
       if !@allow_branch.nil?
         @allow_branch.each() { |branch| if branch==checking_branch; return true; end; }
+          return false
       end 
       if !@deny_branch.nil?
         @deny_branch.each() { |branch| if branch==checking_branch; return false; end }

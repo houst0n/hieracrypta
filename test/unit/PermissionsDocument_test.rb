@@ -26,7 +26,6 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     checked_data=Hieracrypta::PermissionsDocument.new(secret_data)
     assert_equal "hieracrypt-client", checked_data.id
     assert_equal @client_public_key, checked_data.pubkey
-    puts checked_data.allow_branch.class
     assert_equal 1, checked_data.allow_branch.length
     assert_equal "testbranch", checked_data.allow_branch[0]
     assert_equal 1, checked_data.allow_tag.length
@@ -35,6 +34,8 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     assert checked_data.deny_tag.nil?
     assert checked_data.permit_branch('testbranch')
     assert checked_data.permit_tag('testtag')
+    assert !checked_data.permit_branch('someotherbranch')
+    assert !checked_data.permit_tag('someothertag')
   end
 
   def test_decrypt_trusted_deny
@@ -44,15 +45,16 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     checked_data=Hieracrypta::PermissionsDocument.new(secret_data)
     assert_equal "hieracrypt-client", checked_data.id
     assert_equal @client_public_key, checked_data.pubkey
-    puts checked_data.allow_branch.class
     assert checked_data.allow_branch.nil?
     assert checked_data.allow_tag.nil?
     assert_equal 1, checked_data.deny_branch.length
     assert_equal "testbranch", checked_data.deny_branch[0]
     assert_equal 1, checked_data.deny_tag.length
     assert_equal "testtag", checked_data.deny_tag[0]
-    assert (! checked_data.permit_branch('testbranch'))
-    assert (! checked_data.permit_tag('testtag'))
+    assert !checked_data.permit_branch('testbranch')
+    assert !checked_data.permit_tag('testtag')
+    assert checked_data.permit_branch('someotherbranch')
+    assert checked_data.permit_tag('someothertag')
   end
   
   def test_untrust
