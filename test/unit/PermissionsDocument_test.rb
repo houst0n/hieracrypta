@@ -33,6 +33,8 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     assert_equal "testtag", checked_data.allow_tag[0]
     assert checked_data.deny_branch.nil?
     assert checked_data.deny_tag.nil?
+    assert checked_data.permit_branch('testbranch')
+    assert checked_data.permit_tag('testtag')
   end
 
   def test_decrypt_trusted_deny
@@ -49,6 +51,8 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     assert_equal "testbranch", checked_data.deny_branch[0]
     assert_equal 1, checked_data.deny_tag.length
     assert_equal "testtag", checked_data.deny_tag[0]
+    assert (! checked_data.permit_branch('testbranch'))
+    assert (! checked_data.permit_tag('testtag'))
   end
   
   def test_untrust

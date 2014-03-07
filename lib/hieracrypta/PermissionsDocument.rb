@@ -16,10 +16,6 @@ module Hieracrypta
       parse_hash()
     end
     
-    def raw
-      @hash
-    end
-
     def check_and_decrypt(data)
       crypto = GPGME::Crypto.new()
       document = check_signature(crypto, data)
@@ -65,10 +61,30 @@ module Hieracrypta
         #Occurs when there is no signature, at the point the signature object is referenced.
         raise Hieracrypta::NotSigned.new()
       end
-      if verified
-        return document.read
+      if ! verified
+        raise Hieracrypta::UntrustedSignature.new()
       end
-      raise Hieracrypta::UntrustedSignature.new()
+      return document.read
+    end
+  
+    def permit_tag(checking_tag)
+      if !@allow_tag.nil?
+        @allow_tag.each() { |tag| if tag==checking_tag; return true; end; }
+      end
+      if !@deny_tag.nil? 
+        @deny_tag.each() { |tag| if tag==checking_tag; return false; end; }
+      end
+      return true 
+    end
+    
+    def permit_branch(checking_branch)
+      if !@allow_branch.nil?
+        @allow_branch.each() { |branch| if branch==checking_branch; return true; end; }
+      end 
+      if !@deny_branch.nil?
+        @deny_branch.each() { |branch| if branch==checking_branch; return false; end }
+      end
+      return true 
     end
   end
 end
