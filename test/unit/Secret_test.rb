@@ -5,15 +5,10 @@ class SecretTest < Test::Unit::TestCase
 
   def initialize (args)
     super(args)
-    curDir=File.dirname(__FILE__)
-
-    GPGME::Key.import(File.read(File.expand_path("testdata/private_key", curDir)))
-    GPGME::Key.import(File.read(File.expand_path("testdata/public_key", curDir)))
-    @example = File.read(File.expand_path("testdata/example", curDir))
   end
 
   def test_encryption_with_known_identity
-    Hieracrypta::Secret.new("hieracrypta@dev.null", @example)
+    Hieracrypta::Secret.new("hieracrypta.client.allow@dev.null", 'sample text')
   end
   
   def test_refused_encryption_with_unknown_identity

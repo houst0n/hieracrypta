@@ -4,7 +4,6 @@ require 'json'
 module Hieracrypta
   class PermissionsDocument
 
-    attr_reader :id
     attr_reader :pubkey
     attr_reader :allow_branch
     attr_reader :allow_tag
@@ -27,10 +26,6 @@ module Hieracrypta
     end
 
     def parse_hash
-      @id=@hash['id']
-      if @id.nil? 
-        raise Hieracrypta::BadFormat.new()
-      end
       @pubkey=@hash['pubkey']
       if @pubkey.nil? 
         raise Hieracrypta::BadFormat.new()
@@ -57,7 +52,7 @@ module Hieracrypta
             end
           end 
         }
-      rescue EOFError 
+      rescue GPGME::Error::NoData
         #Occurs when there is no signature, at the point the signature object is referenced.
         raise Hieracrypta::NotSigned.new()
       end

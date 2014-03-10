@@ -12,6 +12,7 @@ module Hieracrypta
       # This should read the configuration file; for now we'll hardcode:
       repository_location = '/Users/justinrowles/Documents/workspace/hieracrypta'
       @git_client = Hieracrypta::GitClient.new(repository_location)
+      @permissions = Hieracrypta::Permissions.new()
     end
 
     ####PUT /identities/ + body comprising a signed json object
@@ -23,7 +24,9 @@ module Hieracrypta
     #* HTTP 403 + body describing error reason
     put '/identities/' do
       begin
-        Hieracrypta::PermissionsDocument.new(request.body)
+        @permissions.add_permission(
+          Hieracrypta::PermissionsDocument.new(request.body)
+          )
        'Signature trusted'
       rescue UntrustedSignature
         response.status=403
@@ -43,9 +46,9 @@ module Hieracrypta
         file = params[:splat][0]
         identity=params[:identity]
         branch=params[:branch]
+        @permissions.get_permission(identity).permit_branch(branch)
         content = @git_client.get_branch(branch, file)
         content_type 'text/plain'
-        #puts response.methods().sort()
         Hieracrypta::Secret.new(identity, content).data
       rescue UnknownIdentity 
         response.status=404
@@ -74,6 +77,7 @@ module Hieracrypta
         file = params[:splat][0]
         identity=params[:identity]
         tag=params[:tag]
+        @permissions.get_permission(identity).permit_tag(tag)
         content = @git_client.get_tag(tag, file)
         Hieracrypta::Secret.new(identity, content).data
       rescue UnknownIdentity 
