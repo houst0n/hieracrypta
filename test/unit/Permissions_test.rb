@@ -7,7 +7,6 @@ class PermissionsTest < Test::Unit::TestCase
     super(args)
     @permissions = Hieracrypta::Permissions.new()
     @ak  = Hieracrypta::Keyring.new(:admins)
-    @ck  = Hieracrypta::Keyring.new(:clients)
     @ak.import_key_directory("/Users/houst0n/Documents/Repos/bgch/puppet-secrets/keys/users")
   end
 
@@ -32,8 +31,8 @@ class PermissionsTest < Test::Unit::TestCase
         permissions_document = @permissions.get_permission(identity)
       end
     }
-    @permissions.add_permission(@ck, load_permission("permissions_document_allowing_test", "hieracrypta.client.allow.public"))
-    @permissions.add_permission(@ck, load_permission("permissions_document_not_allowing_test", "hieracrypta.client.deny.public"))
+    @permissions.add_permission(load_permission("permissions_document_allowing_test", "hieracrypta.client.allow.public"))
+    @permissions.add_permission(load_permission("permissions_document_not_allowing_test", "hieracrypta.client.deny.public"))
     ["hieracrypta.client.allow@dev.null", "hieracrypta.client.deny@dev.null"].each { |identity|
       permissions_document = @permissions.get_permission(identity)
       assert_equal Hieracrypta::PermissionsDocument, permissions_document.class

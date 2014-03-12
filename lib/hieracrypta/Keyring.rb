@@ -1,4 +1,5 @@
 require 'gpgme'
+require 'pry'
 
 module Hieracrypta
   class Keyring
@@ -32,12 +33,18 @@ module Hieracrypta
 
     def import_key(pub_key)
       @ctx.import(GPGME::Data.new(pub_key))
+      @ctx.import_result()
+      #binding.pry
     end
 
     def import_key_directory(directory)
       Dir["#{directory}/*.asc.txt"].each do |key_file|
         import_key(File.read(key_file))
       end
+    end
+
+    def get(fingerprint)
+      @ctx.get_key(fingerprint)
     end
 
     def release
