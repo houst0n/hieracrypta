@@ -72,11 +72,11 @@ module Hieracrypta
         }
       rescue GPGME::Error::NoData
         #Occurs when there is no signature, at the point the signature object is referenced.
-        raise Hieracrypta::NotSigned.new()
+        raise Hieracrypta::Error::NotSigned.new()
       end
 
       unless verified
-        raise Hieracrypta::UntrustedSignature.new()
+        raise Hieracrypta::Error::UntrustedSignature.new()
       end
       return document.read
     end
