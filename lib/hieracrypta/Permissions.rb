@@ -10,7 +10,7 @@ module Hieracrypta
     
     def get_permission(identity)
       if @permissions_map[identity].nil?
-        raise Hieracrypta::UnknownIdentity.new(identity)
+        raise Hieracrypta::Error::UnknownIdentity.new(identity)
       end
       @permissions_map[identity]
     end

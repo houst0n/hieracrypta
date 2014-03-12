@@ -20,15 +20,15 @@ module Hieracrypta
       document = check_signature(crypto, data)
       begin
         JSON.parse(document)
-      rescue GPGME::Error::NoData
-        raise Hieracrypta::BadFormat.new()
+      rescue JSON::ParserError
+        raise Hieracrypta::Error::BadFormat.new()
       end
     end
 
     def parse_hash
       @pubkey=@hash['pubkey']
       if @pubkey.nil? 
-        raise Hieracrypta::BadFormat.new()
+        raise Hieracrypta::Error::BadFormat.new()
       end
       allow=@hash['allow']
       if !allow.nil?
@@ -43,9 +43,11 @@ module Hieracrypta
     end
     
     def check_signature(crypto, data)
+      verified = false
+      signed = false
       begin
-        verified = false
         document = crypto.verify(data) { |signature|
+          signed = true
           if ! verified
             if signature.key().owner_trust > 0
               verified = true
@@ -54,10 +56,13 @@ module Hieracrypta
         }
       rescue GPGME::Error::NoData
         #Occurs when there is no signature, at the point the signature object is referenced.
-        raise Hieracrypta::NotSigned.new()
+        raise Hieracrypta::Error::NotSigned.new()
+      end
+      if ! signed
+        raise Hieracrypta::Error::NotSigned.new()
       end
       if ! verified
-        raise Hieracrypta::UntrustedSignature.new()
+        raise Hieracrypta::Error::UntrustedSignature.new()
       end
       return document.read
     end

@@ -1,4 +1,4 @@
-module Hieracrypta
+module Hieracrypta::Error
   class NoSuchBranch < Exception
     def initialize (args)
       super(args)

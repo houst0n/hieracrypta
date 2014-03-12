@@ -13,19 +13,19 @@ class PermissionsTest < Test::Unit::TestCase
     public_key = File.read(File.expand_path("testdata/#{public_key_filename}", curDir)).split("\n").join('\n')
     unsigned_json_file = File.read(File.expand_path("testdata/#{permissions_document_filename}", curDir))
     unsigned_json_file = unsigned_json_file.sub("XXX", public_key)
-    secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta@dev.null').to_s
+    secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta.admin@dev.null').to_s
     Hieracrypta::PermissionsDocument.new(secret_data)
   end
 
   def test_unknown_identity
-    assert_raise Hieracrypta::UnknownIdentity do
+    assert_raise Hieracrypta::Error::UnknownIdentity do
       @permissions.get_permission("made-up-name")
     end
   end
   
   def test_known_identity
     ["hieracrypta.client.allow@dev.null", "hieracrypta.client.deny@dev.null"].each { |identity|
-      assert_raise Hieracrypta::UnknownIdentity do
+      assert_raise Hieracrypta::Error::UnknownIdentity do
         permissions_document = @permissions.get_permission(identity)
       end
     }

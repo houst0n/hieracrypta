@@ -1,4 +1,4 @@
-module Hieracrypta
+module Hieracrypta::Error
   class BadFormat < Exception
     def initialize ()
       super()

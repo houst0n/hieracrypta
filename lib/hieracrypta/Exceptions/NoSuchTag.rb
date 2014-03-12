@@ -1,4 +1,4 @@
-module Hieracrypta
+module Hieracrypta::Error
   class NoSuchTag < Exception
     def initialize (args)
       super(args)
