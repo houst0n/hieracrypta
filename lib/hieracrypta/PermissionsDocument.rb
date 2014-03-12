@@ -9,15 +9,15 @@ module Hieracrypta
     attr_reader :allow_tag
     attr_reader :deny_branch
     attr_reader :deny_tag
-  
-    def initialize (data)
+
+    def initialize(admin_keyring, data)
+      @ak=admin_keyring
       @hash=check_and_decrypt(data)
       parse_hash()
     end
-    
+
     def check_and_decrypt(data)
-      crypto = GPGME::Crypto.new()
-      document = check_signature(crypto, data)
+      document = @ak.check_signature(data)
       begin
         JSON.parse(document)
       rescue GPGME::Error::NoData
@@ -27,7 +27,7 @@ module Hieracrypta
 
     def parse_hash
       @pubkey=@hash['pubkey']
-      if @pubkey.nil? 
+      if @pubkey.nil?
         raise Hieracrypta::BadFormat.new()
       end
       allow=@hash['allow']
@@ -41,47 +41,27 @@ module Hieracrypta
         @deny_tag=deny['tag']
       end
     end
-    
-    def check_signature(crypto, data)
-      begin
-        verified = false
-        document = crypto.verify(data) { |signature|
-          if ! verified
-            if signature.key().owner_trust > 0
-              verified = true
-            end
-          end 
-        }
-      rescue GPGME::Error::NoData
-        #Occurs when there is no signature, at the point the signature object is referenced.
-        raise Hieracrypta::NotSigned.new()
-      end
-      if ! verified
-        raise Hieracrypta::UntrustedSignature.new()
-      end
-      return document.read
-    end
-  
+
     def permit_tag(checking_tag)
       if !@allow_tag.nil?
         @allow_tag.each() { |tag| if tag==checking_tag; return true; end; }
         return false
       end
-      if !@deny_tag.nil? 
+      if !@deny_tag.nil?
         @deny_tag.each() { |tag| if tag==checking_tag; return false; end; }
       end
-      return true 
+      return true
     end
-    
+
     def permit_branch(checking_branch)
       if !@allow_branch.nil?
         @allow_branch.each() { |branch| if branch==checking_branch; return true; end; }
           return false
-      end 
+      end
       if !@deny_branch.nil?
         @deny_branch.each() { |branch| if branch==checking_branch; return false; end }
       end
-      return true 
+      return true
     end
   end
 end

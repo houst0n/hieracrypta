@@ -6,13 +6,16 @@ module Hieracrypta
     configure do
       set :run, false
     end
-        
+
     def initialize
       super
       # This should read the configuration file; for now we'll hardcode:
       repository_location = '/Users/justinrowles/Documents/workspace/hieracrypta'
       @git_client = Hieracrypta::GitClient.new(repository_location)
       @permissions = Hieracrypta::Permissions.new()
+      @admins_keyring  = Hieracrypta::Keyring.new(:admins)
+      @clients_keyring = Hieracrypta::Keyring.new(:clients)
+      @admins_keyring.import_key_directory("/Users/houst0n/Documents/Repos/bgch/puppet-secrets/keys/users")
     end
 
     ####PUT /identities/ + body comprising a signed json object
@@ -24,9 +27,7 @@ module Hieracrypta
     #* HTTP 403 + body describing error reason
     put '/identities/' do
       begin
-        @permissions.add_permission(
-          Hieracrypta::PermissionsDocument.new(request.body)
-          )
+        @permissions.add_permission(@clients_keyring, Hieracrypta::PermissionsDocument.new(@admins_keyring, request.body))
        'Signature trusted'
       rescue UntrustedSignature
         response.status=403
@@ -50,7 +51,7 @@ module Hieracrypta
         content = @git_client.get_branch(branch, file)
         content_type 'text/plain'
         Hieracrypta::Secret.new(identity, content).data
-      rescue UnknownIdentity 
+      rescue UnknownIdentity
         response.status=404
         "No key found for identity '#{identity}'"
       rescue NoSuchFile
@@ -80,7 +81,7 @@ module Hieracrypta
         @permissions.get_permission(identity).permit_tag(tag)
         content = @git_client.get_tag(tag, file)
         Hieracrypta::Secret.new(identity, content).data
-      rescue UnknownIdentity 
+      rescue UnknownIdentity
         response.status=404
         "No key found for identity '#{identity}'"
       rescue NoSuchFile

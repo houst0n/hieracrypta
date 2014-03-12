@@ -5,13 +5,15 @@ class PermissionsDocumentTest < Test::Unit::TestCase
 
   def initialize (args)
     super(args)
+    @ak  = Hieracrypta::Keyring.new(:admins)
+    @ak.import_key_directory("/Users/houst0n/Documents/Repos/bgch/puppet-secrets/keys/users")
   end
 
   def test_decrypt_trusted_allow
     curDir=File.dirname(__FILE__)
     unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_test", curDir))
-    secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta@dev.null').to_s
-    checked_data=Hieracrypta::PermissionsDocument.new(secret_data)
+    secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta.admin@dev.null').to_s
+    checked_data=Hieracrypta::PermissionsDocument.new(@ak, secret_data)
     assert_equal 'XXX', checked_data.pubkey
     assert_equal 1, checked_data.allow_branch.length
     assert_equal "testbranch", checked_data.allow_branch[0]
@@ -28,8 +30,8 @@ class PermissionsDocumentTest < Test::Unit::TestCase
   def test_decrypt_trusted_deny
     curDir=File.dirname(__FILE__)
     unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_not_allowing_test", curDir))
-    secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta@dev.null').to_s
-    checked_data=Hieracrypta::PermissionsDocument.new(secret_data)
+    secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'hieracrypta.admin@dev.null').to_s
+    checked_data=Hieracrypta::PermissionsDocument.new(@ak, secret_data)
     assert_equal 'XXX', checked_data.pubkey
     assert checked_data.allow_branch.nil?
     assert checked_data.allow_tag.nil?
@@ -42,12 +44,12 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     assert checked_data.permit_branch('someotherbranch')
     assert checked_data.permit_tag('someothertag')
   end
-  
+
   def test_signed
     curDir=File.dirname(__FILE__)
     unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_test", curDir))
     assert_raise Hieracrypta::NotSigned do
-      Hieracrypta::PermissionsDocument.new(unsigned_json_file)
+      Hieracrypta::PermissionsDocument.new(@ak, unsigned_json_file)
     end
   end
 
@@ -57,7 +59,7 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_not_allowing_test", curDir))
     secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'bad.guy@dev.null').to_s
     assert_raise Hieracrypta::NotSigned do
-      Hieracrypta::PermissionsDocument.new(unsigned_json_file)
+      Hieracrypta::PermissionsDocument.new(@ak, unsigned_json_file)
     end
   end
 end
