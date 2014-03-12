@@ -1,6 +1,7 @@
 require 'hieracrypta/Permissions.rb'
 require 'hieracrypta/PermissionsDocument.rb'
 require 'hieracrypta/GitClient.rb'
+require 'hieracrypta/Keyring.rb'
 require 'hieracrypta/Main.rb'
 require 'hieracrypta/Secret.rb'
 require 'hieracrypta/VERSION.rb'
