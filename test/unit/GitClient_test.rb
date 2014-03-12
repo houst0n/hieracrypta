@@ -15,19 +15,19 @@ class GitClientTest < Test::Unit::TestCase
   end
   
   def test_read_nonexisting_file_from_existing_branch
-    assert_raise Hieracrypta::NoSuchFile do
+    assert_raise Hieracrypta::Error::NoSuchFile do
        @git.get_branch('testbranch', 'test/unit/testdata/fakefile2')
     end
   end
   
   def test_read_existing_file_from_nonexisting_branch
-    assert_raise Hieracrypta::NoSuchBranch do
+    assert_raise Hieracrypta::Error::NoSuchBranch do
        @git.get_branch('fakebranch', 'test/unit/testdata/testfile2')
     end
   end
   
   def test_read_nonexisting_file_from_nonexisting_branch
-    assert_raise Hieracrypta::NoSuchBranch do
+    assert_raise Hieracrypta::Error::NoSuchBranch do
       @git.get_branch('fakebranch', 'test/unit/testdata/fakefile2')
     end
   end
@@ -38,19 +38,19 @@ class GitClientTest < Test::Unit::TestCase
   end
   
   def test_read_nonexisting_file_from_existing_tag
-    assert_raise Hieracrypta::NoSuchFile do
+    assert_raise Hieracrypta::Error::NoSuchFile do
       @git.get_tag('testtag', 'test/unit/testdata/fakefile')
     end
   end
   
   def test_read_existing_file_from_nonexisting_tag
-    assert_raise Hieracrypta::NoSuchTag do
+    assert_raise Hieracrypta::Error::NoSuchTag do
       @git.get_tag('faketag', 'test/unit/testdata/testfile')
     end
   end
   
   def test_read_nonexisting_file_from_nonexisting_tag
-    assert_raise Hieracrypta::NoSuchTag do
+    assert_raise Hieracrypta::Error::NoSuchTag do
       @git.get_tag('faketag', 'test/unit/testdata/fakefile')
     end
   end

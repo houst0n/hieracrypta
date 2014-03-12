@@ -20,15 +20,15 @@ module Hieracrypta
       document = @ak.check_signature(data)
       begin
         JSON.parse(document)
-      rescue GPGME::Error::NoData
-        raise Hieracrypta::BadFormat.new()
+      rescue JSON::ParserError
+        raise Hieracrypta::Error::BadFormat.new()
       end
     end
 
     def parse_hash
       @pubkey=@hash['pubkey']
       if @pubkey.nil?
-        raise Hieracrypta::BadFormat.new()
+        raise Hieracrypta::Error::BadFormat.new()
       end
       allow=@hash['allow']
       if !allow.nil?
@@ -41,7 +41,6 @@ module Hieracrypta
         @deny_tag=deny['tag']
       end
     end
-
     def permit_tag(checking_tag)
       if !@allow_tag.nil?
         @allow_tag.each() { |tag| if tag==checking_tag; return true; end; }

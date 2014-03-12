@@ -48,7 +48,7 @@ class PermissionsDocumentTest < Test::Unit::TestCase
   def test_signed
     curDir=File.dirname(__FILE__)
     unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_test", curDir))
-    assert_raise Hieracrypta::NotSigned do
+    assert_raise Hieracrypta::Error::NotSigned do
       Hieracrypta::PermissionsDocument.new(@ak, unsigned_json_file)
     end
   end
@@ -60,6 +60,15 @@ class PermissionsDocumentTest < Test::Unit::TestCase
     secret_data=GPGME::Crypto.new().clearsign(unsigned_json_file, :signer => 'bad.guy@dev.null').to_s
     assert_raise Hieracrypta::NotSigned do
       Hieracrypta::PermissionsDocument.new(@ak, unsigned_json_file)
+    assert_raise Hieracrypta::Error::UntrustedSignature do
+      Hieracrypta::PermissionsDocument.new(secret_data)
+    end
+  end
+
+  def test_signed_not_json
+    secret_data=GPGME::Crypto.new().clearsign('junk', :signer => 'hieracrypta.admin@dev.null').to_s
+    assert_raise Hieracrypta::Error::BadFormat do
+      Hieracrypta::PermissionsDocument.new(secret_data)
     end
   end
 end

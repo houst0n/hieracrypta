@@ -11,7 +11,7 @@ module Hieracrypta
       begin
         root = @rugged.rev_parse(tag).tree()
       rescue Rugged::ReferenceError
-        raise Hieracrypta::NoSuchTag.new(tag)
+        raise Hieracrypta::Error::NoSuchTag.new(tag)
       end
       get_file(root, file)
     end
@@ -19,7 +19,7 @@ module Hieracrypta
     def get_branch(branch, file)
       root = Rugged::Branch.lookup(@rugged, branch)
       if root.nil?
-        raise Hieracrypta::NoSuchBranch.new(branch)
+        raise Hieracrypta::Error::NoSuchBranch.new(branch)
       end
       root=Rugged::Object.lookup(@rugged, root.target()).tree()
       get_file(root, file)
@@ -30,7 +30,7 @@ module Hieracrypta
       for file_part in file_parts do
         root_hash=root[file_part]
         if root_hash.nil?
-          raise Hieracrypta::NoSuchFile.new(file)
+          raise Hieracrypta::Error::NoSuchFile.new(file)
         end
         root=Rugged::Object.lookup(@rugged, root_hash[:oid])
       end
