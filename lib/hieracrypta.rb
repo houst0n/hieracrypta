@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 require 'hieracrypta/Exceptions/NoSuchBranch.rb'
 require 'hieracrypta/Exceptions/NoSuchConfiguration.rb'
 require 'hieracrypta/Exceptions/NoSuchTag.rb'
