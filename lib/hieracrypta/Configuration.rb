@@ -27,4 +27,5 @@ module Hieracrypta
     end
   end
   CONFIGURATION=Configuration.new()
+  attr_reader :CONFIGURATION
 end
