@@ -16,7 +16,6 @@ module Hieracrypta
       
       @git_client = Hieracrypta::GitClient.new(repository_location)
       @permissions = Hieracrypta::Permissions.new()
-      @admins_keyring  = Hieracrypta::Keyring.new(:admins)
     end
 
     ####PUT /identities/ + body comprising a signed json object
@@ -28,7 +27,7 @@ module Hieracrypta
     #* HTTP 403 + body describing error reason
     put '/identities/' do
       begin
-        @permissions.add_permission(@clients_keyring, Hieracrypta::PermissionsDocument.new(@admins_keyring, request.body))
+        @permissions.add_permission(@clients_keyring, Hieracrypta::PermissionsDocument.new(request.body))
        'Signature trusted'
       rescue Error::UntrustedSignature
         response.status=403

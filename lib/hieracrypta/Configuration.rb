@@ -19,19 +19,6 @@ module Hieracrypta
       result
     end
     
-    def get_admin_keyring_location
-      admin_keyring_location=@config['admin_keyring_location']
-      if !(admin_keyring_location.start_with?('/'))
-        File.expand_path(admin_keyring_location, File.dirname(__FILE__))
-      end
-    end
-    def get_client_keyring_location
-      client_keyring_location=@config['client_keyring_location']
-      if !(client_keyring_location.start_with?('/'))
-        File.expand_path(client_keyring_location, File.dirname(__FILE__))
-      end
-    end
-    
     def get_as_file_location(config_item)
       result = get(config_item)
       if !(result.start_with?('/'))

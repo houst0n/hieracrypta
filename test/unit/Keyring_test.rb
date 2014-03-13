@@ -6,8 +6,8 @@ class KeyringTest < Test::Unit::TestCase
   def initialize (args)
     super(args)
 
-    @admins_keyring  = Hieracrypta::Keyring.new(:admins)
-    @clients_keyring = Hieracrypta::Keyring.new(:clients)
+    @admins_keyring  = Hieracrypta::Keyring.admins
+    @clients_keyring = Hieracrypta::Keyring.clients
   end
 
   def test_admin_import
@@ -16,11 +16,12 @@ class KeyringTest < Test::Unit::TestCase
   end
 
   def test_admin_directory_import
-    curDir=File.dirname(__FILE__)
-    @admins_keyring.import_key_directory(File.expand_path("testdata", curDir))
-    assert_equal 4, @admins_keyring.count_keys()
+    assert_equal 1, @admins_keyring.count_keys()
   end
 
+  def test_client_directory_import
+    assert_equal 2, @clients_keyring.count_keys()
+  end
 
   def test_release
     @admins_keyring.release

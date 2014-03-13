@@ -17,7 +17,9 @@ module Hieracrypta
     end
 
     def initialize(type)
-      GPGME::Engine.home_dir = Keyring.locations[type][:keyring]
+      location = Keyring.locations[type][:keyring]
+      Dir.foreach(location) {|f| File.delete(File.join(location, f)) if f != '.' && f != '..'}
+      GPGME::Engine.home_dir = location 
       @ctx = GPGME::Ctx.new(:keylist_mode => GPGME::KEYLIST_MODE_LOCAL)
       import_key_directory(Keyring.locations[type][:keys])
     end
@@ -71,12 +73,8 @@ module Hieracrypta
       crypto = GPGME::Crypto.new()
       begin
         verified = false
-        document = crypto.verify(data) { |signature|
-            @ctx.each_keys { |found_key|
-              if found_key.fingerprint() == signature.fingerprint()
-                  verified = true
-              end
-            }
+        document = @ctx.verify(data) { |signature|
+          verified = true
         }
       rescue GPGME::Error::NoData
         #Occurs when there is no signature, at the point the signature object is referenced.
@@ -89,5 +87,14 @@ module Hieracrypta
       return document.read
     end
 
+    @@admins=Keyring.new(:admins)
+    def self.admins
+      @@admins
+    end
+  
+    @@clients=Keyring.new(:clients)
+    def self.clients
+      @@clients
+    end
   end
 end

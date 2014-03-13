@@ -10,8 +10,8 @@ module Hieracrypta
     attr_reader :deny_branch
     attr_reader :deny_tag
 
-    def initialize(admin_keyring, data)
-      @ak=admin_keyring
+    def initialize(data)
+      @ak=Keyring.admins()
       @hash=check_and_decrypt(data)
       parse_hash()
     end
