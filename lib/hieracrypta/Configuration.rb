@@ -31,6 +31,13 @@ module Hieracrypta
         File.expand_path(client_keyring_location, File.dirname(__FILE__))
       end
     end
+    
+    def get_as_file_location(config_item)
+      result = get(config_item)
+      if !(result.start_with?('/'))
+        File.expand_path(result, File.dirname(__FILE__))
+      end
+    end
   end
   @@CONFIGURATION=Configuration.new()
   def self.configuration

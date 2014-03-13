@@ -17,7 +17,6 @@ module Hieracrypta
       @git_client = Hieracrypta::GitClient.new(repository_location)
       @permissions = Hieracrypta::Permissions.new()
       @admins_keyring  = Hieracrypta::Keyring.new(:admins)
-      @admins_keyring.import_key_directory("/Users/houst0n/Documents/Repos/bgch/puppet-secrets/keys/users")
     end
 
     ####PUT /identities/ + body comprising a signed json object

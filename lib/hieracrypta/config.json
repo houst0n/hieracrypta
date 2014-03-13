@@ -1,4 +1,6 @@
 {
 	"admin_keyring_location": "../../test/unit/testdata/working/admin/",
-	"client_keyring_location": "../../test/unit/testdata/working/client/"
+	"admin_keys_location": "../../test/unit/testdata/keys/admin/",
+	"client_keyring_location": "../../test/unit/testdata/working/client/",
+	"client_keys_location": "../../test/unit/testdata/keys/client/"
 }

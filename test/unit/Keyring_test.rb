@@ -12,7 +12,7 @@ class KeyringTest < Test::Unit::TestCase
 
   def test_admin_import
     curDir=File.dirname(__FILE__)
-    @admins_keyring.import_key(File.read(File.expand_path("testdata/hieracrypta.admin.public", curDir)))
+    @admins_keyring.import_key(File.read(File.expand_path("testdata/keys/admin/hieracrypta.admin.public", curDir)))
   end
 
   def test_admin_directory_import

@@ -5,14 +5,21 @@ module Hieracrypta
 
     def self.locations
       {
-        :admins  => Hieracrypta.configuration.get_admin_keyring_location(),
-        :clients => Hieracrypta.configuration.get_client_keyring_location()
+        :admins  => {
+          :keyring => Hieracrypta.configuration.get_as_file_location('admin_keyring_location'),
+          :keys => Hieracrypta.configuration.get_as_file_location('admin_keys_location')
+        },
+        :clients => {
+          :keyring => Hieracrypta.configuration.get_as_file_location('client_keyring_location'),
+          :keys => Hieracrypta.configuration.get_as_file_location('client_keys_location')
+        }
       }
     end
 
     def initialize(type)
-      GPGME::Engine.home_dir = Keyring.locations[type]
+      GPGME::Engine.home_dir = Keyring.locations[type][:keyring]
       @ctx = GPGME::Ctx.new(:keylist_mode => GPGME::KEYLIST_MODE_LOCAL)
+      import_key_directory(Keyring.locations[type][:keys])
     end
 
     def list_keys(prefix = "unknown: ")
