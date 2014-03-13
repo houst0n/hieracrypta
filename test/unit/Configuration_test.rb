@@ -12,12 +12,12 @@ class ConfigurationTest < Test::Unit::TestCase
     assert_equal "wherever", @configuration.get('admin_keyring_location')
   end
   
-  def test_read_two_dep
+  def test_read_two_deep
     assert_equal "value", @configuration.get('two/deep')
   end
   
-  def test_read_two_dep
-    assert_raise NoSuchConfiguration do
+  def test_read_no_such_config_item
+    assert_raise Hieracrypta::NoSuchConfiguration do
       @configuration.get('made/up/item')
     end
   end

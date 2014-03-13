@@ -1,5 +1,4 @@
 require 'gpgme'
-require 'pry'
 
 module Hieracrypta
   class Keyring
@@ -34,7 +33,6 @@ module Hieracrypta
     def import_key(pub_key)
       @ctx.import(GPGME::Data.new(pub_key))
       @ctx.import_result()
-      #binding.pry
     end
 
     def import_key_directory(directory)
