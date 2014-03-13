@@ -1,0 +1,8 @@
+{
+	"admin_keyring_location": "../../testdata/admin",
+	"admin": {
+		"keyring": {
+			"location": "banana"
+		}
+	}
+}
