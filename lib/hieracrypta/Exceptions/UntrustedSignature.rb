@@ -1,4 +1,4 @@
-module Hieracrypta
+module Hieracrypta::Error
   class UntrustedSignature < Exception
     def initialize ()
       super()

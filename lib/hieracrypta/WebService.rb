@@ -14,7 +14,6 @@ module Hieracrypta
       @git_client = Hieracrypta::GitClient.new(repository_location)
       @permissions = Hieracrypta::Permissions.new()
       @admins_keyring  = Hieracrypta::Keyring.new(:admins)
-      @clients_keyring = Hieracrypta::Keyring.new(:clients)
       @admins_keyring.import_key_directory("/Users/houst0n/Documents/Repos/bgch/puppet-secrets/keys/users")
     end
 
@@ -29,7 +28,7 @@ module Hieracrypta
       begin
         @permissions.add_permission(@clients_keyring, Hieracrypta::PermissionsDocument.new(@admins_keyring, request.body))
        'Signature trusted'
-      rescue UntrustedSignature
+      rescue Error::UntrustedSignature
         response.status=403
         'This signature is not trusted'
       end
@@ -51,13 +50,13 @@ module Hieracrypta
         content = @git_client.get_branch(branch, file)
         content_type 'text/plain'
         Hieracrypta::Secret.new(identity, content).data
-      rescue UnknownIdentity
+      rescue Error::UnknownIdentity
         response.status=404
         "No key found for identity '#{identity}'"
-      rescue NoSuchFile
+      rescue Error::NoSuchFile
         response.status=404
         "No file '#{file}' on branch '#{branch}'"
-      rescue NoSuchBranch
+      rescue Error::NoSuchBranch
         response.status=404
         "No branch '#{branch}'"
       rescue Exception => e
@@ -81,13 +80,13 @@ module Hieracrypta
         @permissions.get_permission(identity).permit_tag(tag)
         content = @git_client.get_tag(tag, file)
         Hieracrypta::Secret.new(identity, content).data
-      rescue UnknownIdentity
+      rescue Error::UnknownIdentity
         response.status=404
         "No key found for identity '#{identity}'"
-      rescue NoSuchFile
+      rescue Error::NoSuchFile
         response.status=404
         "No file '#{file}' tagged '#{tag}'"
-      rescue NoSuchTag
+      rescue Error::NoSuchTag
         response.status=404
         "No tag '#{tag}'"
       rescue Exception => e

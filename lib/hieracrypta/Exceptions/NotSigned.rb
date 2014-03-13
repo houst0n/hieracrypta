@@ -1,4 +1,4 @@
-module Hieracrypta
+module Hieracrypta::Error
   class NotSigned < Exception
     def initialize ()
       super()
