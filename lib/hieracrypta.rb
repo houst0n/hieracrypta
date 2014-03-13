@@ -6,6 +6,7 @@ require 'hieracrypta/Exceptions/NotSigned.rb'
 require 'hieracrypta/Exceptions/UntrustedSignature.rb'
 require 'hieracrypta/Exceptions/UnknownIdentity.rb'
 require 'hieracrypta/Exceptions/BadFormat.rb'
+require 'hieracrypta/Exceptions/Error.rb'
 
 require 'hieracrypta/Permissions.rb'
 require 'hieracrypta/PermissionsDocument.rb'
@@ -16,4 +17,3 @@ require 'hieracrypta/Secret.rb'
 require 'hieracrypta/VERSION.rb'
 require 'hieracrypta/WebService.rb'
 require 'hieracrypta/Configuration.rb'
-
