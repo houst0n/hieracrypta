@@ -16,11 +16,9 @@ class KeyringTest < Test::Unit::TestCase
   end
 
   def test_admin_directory_import
-    @admins_keyring.import_key_directory("/Users/houst0n/Documents/Repos/bgch/puppet-secrets/keys/users")
-  end
-
-  def test_count_keys
-    assert_equal 9, @admins_keyring.count_keys()
+    curDir=File.dirname(__FILE__)
+    @admins_keyring.import_key_directory(File.expand_path("testdata", curDir))
+    assert_equal 4, @admins_keyring.count_keys()
   end
 
 

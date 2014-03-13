@@ -5,8 +5,8 @@ module Hieracrypta
 
     def self.locations
       {
-        :admins  => '/tmp/admins',
-        :clients => '/tmp/clients'
+        :admins  => Hieracrypta.configuration.get_admin_keyring_location(),
+        :clients => Hieracrypta.configuration.get_client_keyring_location()
       }
     end
 
@@ -32,11 +32,14 @@ module Hieracrypta
 
     def import_key(pub_key)
       @ctx.import(GPGME::Data.new(pub_key))
-      @ctx.import_result()
+      @ctx.import_result.imports[0].fingerprint()
     end
 
     def import_key_directory(directory)
-      Dir["#{directory}/*.asc.txt"].each do |key_file|
+      Dir["#{directory}/*.public"].each do |key_file|
+        import_key(File.read(key_file))
+      end
+      Dir["#{directory}/*.private"].each do |key_file|
         import_key(File.read(key_file))
       end
     end

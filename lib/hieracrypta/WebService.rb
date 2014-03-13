@@ -10,7 +10,10 @@ module Hieracrypta
     def initialize
       super
       # This should read the configuration file; for now we'll hardcode:
-      repository_location = '/Users/justinrowles/Documents/workspace/hieracrypta'
+  
+      curDir=File.dirname(__FILE__)
+      repository_location = File.expand_path("../../", curDir)
+      
       @git_client = Hieracrypta::GitClient.new(repository_location)
       @permissions = Hieracrypta::Permissions.new()
       @admins_keyring  = Hieracrypta::Keyring.new(:admins)

@@ -25,7 +25,15 @@ module Hieracrypta
         File.expand_path(admin_keyring_location, File.dirname(__FILE__))
       end
     end
+    def get_client_keyring_location
+      client_keyring_location=@config['client_keyring_location']
+      if !(client_keyring_location.start_with?('/'))
+        File.expand_path(client_keyring_location, File.dirname(__FILE__))
+      end
+    end
   end
-  CONFIGURATION=Configuration.new()
-  attr_reader :CONFIGURATION
+  @@CONFIGURATION=Configuration.new()
+  def self.configuration
+    @@CONFIGURATION
+  end
 end

@@ -17,7 +17,7 @@ module Hieracrypta
     end
 
     def add_permission(permissions_document)
-      fingerprint = @clients_keyring.import_key(permissions_document.pubkey).imports[0].fingerprint()
+      fingerprint = @clients_keyring.import_key(permissions_document.pubkey)
       key = @clients_keyring.get(fingerprint)
       @permissions_map[key.email()]=permissions_document
     end

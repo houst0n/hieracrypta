@@ -1,0 +1,4 @@
+{
+	"admin_keyring_location": "../../test/unit/testdata/working/admin/",
+	"client_keyring_location": "../../test/unit/testdata/working/client/"
+}
