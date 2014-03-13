@@ -6,7 +6,7 @@ module Hieracrypta
 
     def initialize
       @permissions_map={}
-      @clients_keyring = Hieracrypta::Keyring.new(:clients)
+      @clients_keyring = Hieracrypta::Keyring.clients()
     end
 
     def get_permission(identity)

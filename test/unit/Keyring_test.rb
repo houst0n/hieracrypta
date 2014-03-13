@@ -23,9 +23,4 @@ class KeyringTest < Test::Unit::TestCase
     assert_equal 2, @clients_keyring.count_keys()
   end
 
-  def test_release
-    @admins_keyring.release
-    @clients_keyring.release
-  end
-
 end

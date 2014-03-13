@@ -46,19 +46,17 @@ module Hieracrypta
 
     def import_key_directory(directory)
       Dir["#{directory}/*.public"].each do |key_file|
+        puts "importing #{key_file}"
         import_key(File.read(key_file))
       end
       Dir["#{directory}/*.private"].each do |key_file|
+        puts "importing #{key_file}"
         import_key(File.read(key_file))
       end
     end
 
     def get(fingerprint)
       @ctx.get_key(fingerprint)
-    end
-
-    def release
-      @ctx.release
     end
 
     def verify(data)
@@ -70,21 +68,39 @@ module Hieracrypta
     end
 
     def check_signature(data)
-      crypto = GPGME::Crypto.new()
+      verified = false
       begin
-        verified = false
-        document = @ctx.verify(data) { |signature|
-          verified = true
-        }
+        document = @ctx.verify(GPGME::Data.new(data))
       rescue GPGME::Error::NoData
         #Occurs when there is no signature, at the point the signature object is referenced.
         raise Hieracrypta::Error::NotSigned.new()
       end
-
-      unless verified
+      begin
+        signers = @ctx.verify_result().signatures
+        signature = signers[0]
+        fingerprint = signature.fingerprint
+        key = @ctx.get_key(fingerprint)
+      rescue EOFError
         raise Hieracrypta::Error::UntrustedSignature.new()
       end
-      return document.read
+      return document.to_s
+    end
+    
+    def sign(plain, identity)
+      @ctx.clear_signers()
+      @ctx.add_signer(@ctx.keys(identity)[0])
+      data = GPGME::Data.new()
+      @ctx.sign(GPGME::Data.new(plain), data, GPGME::GPGME_SIG_MODE_CLEAR)
+      data.to_s
+    end
+    
+    def encrypt(plain, identity)
+      keys=[]
+      key=@ctx.each_key(identity) { | key | keys << key }
+      if keys.length()==0
+        raise Hieracrypta::Error::UnknownIdentity.new(identity)
+      end
+      @ctx.encrypt(keys, GPGME::Data.new(plain), GPGME::Data.new(), GPGME::ENCRYPT_ALWAYS_TRUST)
     end
 
     @@admins=Keyring.new(:admins)

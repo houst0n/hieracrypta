@@ -27,7 +27,7 @@ module Hieracrypta
     #* HTTP 403 + body describing error reason
     put '/identities/' do
       begin
-        @permissions.add_permission(@clients_keyring, Hieracrypta::PermissionsDocument.new(request.body))
+        @permissions.add_permission(Hieracrypta::PermissionsDocument.new(request.body))
        'Signature trusted'
       rescue Error::UntrustedSignature
         response.status=403
@@ -47,19 +47,28 @@ module Hieracrypta
         file = params[:splat][0]
         identity=params[:identity]
         branch=params[:branch]
-        @permissions.get_permission(identity).permit_branch(branch)
-        content = @git_client.get_branch(branch, file)
-        content_type 'text/plain'
-        Hieracrypta::Secret.new(identity, content).data
-      rescue Error::UnknownIdentity
-        response.status=404
-        "No key found for identity '#{identity}'"
-      rescue Error::NoSuchFile
-        response.status=404
-        "No file '#{file}' on branch '#{branch}'"
-      rescue Error::NoSuchBranch
-        response.status=404
-        "No branch '#{branch}'"
+        begin
+          @permissions.get_permission(identity).permit_branch(branch)
+        rescue Error::UnknownIdentity
+          response.status=404
+          return "No permissions found for identity '#{identity}'"
+        end
+        begin
+          content = @git_client.get_branch(branch, file)
+        rescue Error::NoSuchFile
+          response.status=404
+          return "No file '#{file}' on branch '#{branch}'"
+        rescue Error::NoSuchBranch
+          response.status=404
+          return "No branch '#{branch}'"
+        end
+        begin
+          content_type 'text/plain'
+          Hieracrypta::Secret.new(identity, content).data
+        rescue Error::UnknownIdentity
+          response.status=404
+          "No key found for identity '#{identity}'"
+        end
       rescue Exception => e
         response.status=500
         e.to_s
@@ -78,18 +87,27 @@ module Hieracrypta
         file = params[:splat][0]
         identity=params[:identity]
         tag=params[:tag]
-        @permissions.get_permission(identity).permit_tag(tag)
-        content = @git_client.get_tag(tag, file)
-        Hieracrypta::Secret.new(identity, content).data
-      rescue Error::UnknownIdentity
-        response.status=404
-        "No key found for identity '#{identity}'"
-      rescue Error::NoSuchFile
-        response.status=404
-        "No file '#{file}' tagged '#{tag}'"
-      rescue Error::NoSuchTag
-        response.status=404
-        "No tag '#{tag}'"
+        begin
+          @permissions.get_permission(identity).permit_tag(tag)
+        rescue Error::UnknownIdentity
+          response.status=404
+          "No permissions found for identity '#{identity}'"
+        end
+        begin
+          content = @git_client.get_tag(tag, file)
+        rescue Error::NoSuchFile
+          response.status=404
+          return "No file '#{file}' tagged '#{tag}'"
+        rescue Error::NoSuchTag
+          response.status=404
+          return "No tag '#{tag}'"
+        end
+        begin
+          Hieracrypta::Secret.new(identity, content).data
+        rescue Error::UnknownIdentity
+          response.status=404
+          return "No key found for identity '#{identity}'"
+        end
       rescue Exception => e
         response.status=500
         e.to_s

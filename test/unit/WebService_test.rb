@@ -19,7 +19,7 @@ class WebServiceTest < Test::Unit::TestCase
     public_key = File.read(File.expand_path("testdata/keys/client/hieracrypta.client.allow.public", curDir)).split("\n").join('\n')
     unsigned_json_file = File.read(File.expand_path("testdata/permissions_document_allowing_test", curDir))
     @unsigned_json_file = unsigned_json_file.sub("XXX", public_key)
-    @signed_json_file=GPGME::Crypto.new().clearsign(@unsigned_json_file, :signer => 'hieracrypta.admin@dev.null').to_s
+    @signed_json_file=Hieracrypta::Keyring.admins().sign(@unsigned_json_file, 'hieracrypta.admin@dev.null')
   end
   
   def app
